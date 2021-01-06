@@ -1,0 +1,13 @@
+{
+  "extends": "react-app",
+  "plugins": ["prettier", "react", "import"],
+  "env": {},
+  "rules": {
+    "import/no-anonymous-default-export": [
+      "error",
+      {
+        "allowObject": true
+      }
+    ]
+  }
+}

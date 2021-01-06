@@ -1,0 +1,42 @@
+openapi: 3.0.3
+info:
+  title: Playola API
+  description: |
+    Playola allows you to easily create a 24-hour, live, radio station.
+  version: 0.2.0
+
+servers:
+  - url: https://development.gigantic-server.com/v1
+    description: Development server
+  - url: https://staging.gigantic-server.com/v1
+    description: Staging server
+  - url: https://api.gigantic-server.com/v1
+    description: Production server
+
+tags:
+  - name: spotify
+    description: |
+      ## Overview
+      This is the Spotify description
+  - name: users
+    description: |
+      # Overview
+      This is the users description
+
+paths:
+  # For now, OpenAPI does not support importing an entire file of path
+  # definitions.  So, each path must be defined and referenced.
+
+  # --- Spotify ---
+  /v1/spotify/auth/authorize:
+    $ref: './spotify.swagger.yaml/#/SpotifyAuthorizeEndpoint'
+
+  /v1/spotify/auth/token/swap:
+    $ref: './spotify.swagger.yaml/#/SpotifyAuthTokenSwapEndpoint'
+
+  # --- Users ---
+  /v1/users:
+    $ref: './user.swagger.yaml/#/CreateUserEndpoint'
+
+  /v1/users/{userId}/songs:
+    $ref: './user.swagger.yaml/#/GetUsersSongsEndpoint'

@@ -1,0 +1,101 @@
+version: "3"
+
+services:
+  #  ---- Uncomment below for rabbitmq ---- #
+  # redis:
+  #   container_name: "redis"
+  #   image: "redis:alpine"
+
+  postgres:
+    container_name: "postgres"
+    build: ./docker/postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/postgres:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_MULTIPLE_DATABASES: serverdev,servertest
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+
+  #  ---- Uncomment below for rabbitmq ---- #
+  # rabbitmq:
+  #   container_name: "rabbitmq"
+  #   image: rabbitmq:3-management
+  #   ports:
+  #     - "8080:5672"
+  #   environment:
+  #     RABBITMQ_DEFAULT_PASS: pass
+  #     RABBITMQ_DEFAULT_USER: user
+  #     RABBITMQ_DEFAULT_VHOST: vhost
+
+  #  ---- Uncomment below for nginx ---- #
+  # nginx:
+  #   container_name: "nginx"
+  #   build:
+  #     context: ./services/nginx
+  #     dockerfile: Dockerfile
+  #   restart:
+  #     always
+  #   ports:
+  #     - 80:80
+  #   depends_on:
+  #     - server
+  #     # - audio-getter
+  #     - website
+
+  server:
+    container_name: "server"
+    build:
+      context: ./services/server
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:10020:10020"
+      - "9229:9229"
+    expose:
+      - 9229
+    volumes:
+      - ./services/server:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - redis
+      - postgres
+      - rabbitmq
+      - migrate
+    env_file:
+      - ./services/server/.env
+    command:
+      ["./wait-for", "rabbitmq:5672", "--timeout=180", "--", "yarn", "start"]
+
+  migrate:
+    container_name: "migrate"
+    build:
+      context: ./services/server
+      dockerfile: Dockerfile
+    volumes:
+      - ./services/server:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - redis
+      - postgres
+    env_file:
+      - ./services/server/.env
+    command: ["yarn", "migrate:all"]
+
+  website:
+    container_name: "website"
+    build:
+      context: ./services/website
+      dockerfile: Dockerfile
+    ports:
+      - "10060:10060"
+    volumes:
+      - ./services/website:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - redis
+      - postgres
+    environment:
+      PORT: "10060"
+    stdin_open: true
+    command: ["yarn", "start"]

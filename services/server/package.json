@@ -1,0 +1,62 @@
+{
+  "name": "playola-server",
+  "version": "1.0.0",
+  "description": "Creates and maintains radio stations based on the users's Spotify Account",
+  "main": "index.js",
+  "scripts": {
+    "sequelize": "sequelize",
+    "migrate": "sequelize db:migrate",
+    "migrate:test": "env-cmd -f .env-test sequelize db:migrate",
+    "migrate:all": "yarn run migrate && yarn run migrate:test",
+    "migration:create": "sequelize migration:generate",
+    "db:reset:test": "yarn run db:drop:test && yarn run db:create:test && yarn run migrate:test",
+    "db:drop:test": "env-cmd -f .env-test sequelize db:drop",
+    "db:create:test": "env-cmd -f .env-test sequelize db:create",
+    "start": "nodemon -L server.js",
+    "debug": "nodemon --inspect=0.0.0.0:9229 -L server.js",
+    "test-local": "env-cmd .env-test mocha --compilers js:babel-register --require babel-polyfill",
+    "test": "yarn waitfor:rabbitmq && env-cmd -f .env-test mocha \"./{,!(node_modules)/**}/*.test.js\" --recursive --exit",
+    "lint": "eslint .",
+    "waitfor:rabbitmq": "./wait-for rabbitmq:5672 --timeout=180 -- echo RabbitMQ UP",
+    "heroku-postbuild": "yarn migrate",
+    "generateSampleData": "yarn waitfor:rabbitmq && env-cmd -f .env-test mocha ./testHelpers/generateSampleData.js --recursive --exit"
+  },
+  "author": "Playola Radio Inc",
+  "license": "MIT",
+  "dependencies": {
+    "amqplib": "^0.6.0",
+    "apollo-server-express": "^2.19.1",
+    "axios": "^0.21.0",
+    "body-parser": "^1.19.0",
+    "compression": "^1.7.4",
+    "errorhandler": "^1.5.1",
+    "express": "^4.16.3",
+    "express-bearer-token": "^2.1.1",
+    "express-jwt": "^6.0.0",
+    "graphql": "^15.4.0",
+    "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0",
+    "pg": "^8.5.1",
+    "pg-hstore": "^2.3.3",
+    "redis": "^3.0.2",
+    "sequelize": "^6.3.5",
+    "sequelize-cli": "^6.2.0",
+    "subscriptions-transport-ws": "^0.9.18",
+    "swagger-ui-express": "^4.1.6"
+  },
+  "devDependencies": {
+    "assert": "^2.0.0",
+    "chai": "^4.1.2",
+    "env-cmd": "^10.1.0",
+    "eslint": "^7.17.0",
+    "faker": "^5.1.0",
+    "mocha": "^8.2.1",
+    "nock": "^13.0.5",
+    "nodemon": "^2.0.6",
+    "sinon": "^9.2.2",
+    "supertest": "^6.0.1"
+  },
+  "engines": {
+    "node": "^14.15.1"
+  }
+}

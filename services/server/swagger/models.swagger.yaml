@@ -1,0 +1,56 @@
+Song:
+  type: object
+  properties:
+    id:
+      type: string
+      description: The song's playola id.
+      example: '5531636b4b1f7e86214235cc'
+    title:
+      type: string
+      description: The title of the song.
+      example: 'Fade to Gray'
+    artist:
+      type: string
+      description: The artist's name.
+      example: 'Rachel Loy'
+    album:
+      type: string
+      description: The album that the song comes from.
+      example: 'Broken Machine'
+    durationMS:
+      type: integer
+      description: The duration of the song in ms.
+      example: 290925
+    popularity:
+      type: integer
+      description: An integer between 0-100 representing the overall popularity of the song.
+      example: 55
+    endOfMessageMS:
+      type: integer
+      description: The 'end of message' in ms.  (The point where exit crossfade should begin song-to-song)
+      example: 160000
+    endOfIntroMS:
+      type: integer
+      description: The end of the intro in ms -- marks where an overlapping Voicetrack should end.
+      example: 8000
+    beginningOfOutroMS:
+      type: integer
+      description: The 'beginning of outro' in ms.  This is where an overlapping Voicetrack should start
+      example: 155000
+    audioFileUrl:
+      type: string
+      description: The url where the audio file can be downloaded
+      example: '//songs.playola.fm/-pl-0000438-RachelLoy-AfterTheStorm.mp3'
+    isrc:
+      type: string
+      description: The song's isrc code.
+      example: 'ushm21226779'
+    spotifyID:
+      type: string
+      description: The song's spotify track id.
+      example: '7BvpGkNPd49xhN7EguxJz0'
+
+Songs:
+  type: array
+  items:
+    $ref: './#/Song'

@@ -1,0 +1,5 @@
+/*
+* Test settings
+*/
+module.exports = {
+};
